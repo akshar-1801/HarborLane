@@ -7,7 +7,7 @@ export default function CartDrawer() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const windowHeight = typeof window !== "undefined" ? window.innerHeight : 800; // Fallback for SSR
-  const minY = -windowHeight + 160; // Max height when fully opened (leaving a 100px gap from the top)
+  const minY = -windowHeight + 160; // Max height when fully opened (leaving a 160px gap from the top)
   const maxY = 0; // Drawer hidden below screen
 
   return (
@@ -17,7 +17,7 @@ export default function CartDrawer() {
       dragConstraints={{ top: minY, bottom: maxY }}
       initial={{ y: maxY }} // Start below screen
       animate={{ y: isExpanded ? minY : maxY }} // Animate to expanded or hidden state
-      transition={{ type: "spring", stiffness: 200, damping: 30 }}
+      transition={{ type: "spring", stiffness: 300, damping: 40 }} // Adjusted stiffness and damping for less bounce
       onDragEnd={(_, info) => {
         if (info.point.y > windowHeight * 0.5) {
           setIsExpanded(false); // Close if dragged too low
@@ -25,6 +25,7 @@ export default function CartDrawer() {
           setIsExpanded(true); // Open if dragged up
         }
       }}
+      dragElastic={0} // Prevent dragging beyond the set limits
     >
       {/* Drag Handle */}
       <div className="w-12 h-1.5 bg-gray-400 rounded-full mx-auto mb-3 cursor-pointer" />
