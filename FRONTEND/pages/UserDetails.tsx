@@ -74,9 +74,14 @@ export function UserDetails() {
 
     setErrors(newErrors);
 
+    // Proceed only if there are no errors
     if (!Object.values(newErrors).some((error) => error !== "")) {
       console.log("Form submitted:", { firstName, lastName, phoneNumber });
-      navigate("/cart");
+
+      // ✅ FIX: Ensure navigation occurs after state update
+      setTimeout(() => {
+        navigate("/cart");
+      }, 100);
     }
   };
 
