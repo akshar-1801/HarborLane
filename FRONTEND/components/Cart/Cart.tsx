@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 import { Html5QrcodeScanner } from "html5-qrcode";
 import CartItem from "./CartItem/CartItem";
+import CartCard from "./CartCard/CartCard"; // Import CartCard component
 
 interface ScannedProduct {
   id: string;
@@ -12,6 +14,7 @@ interface ScannedProduct {
 }
 
 const Cart = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [tabs, setTabs] = useState([1]);
   const [activeTab, setActiveTab] = useState(0);
   const [scannedProducts, setScannedProducts] = useState<ScannedProduct[]>([]);
@@ -21,6 +24,7 @@ const Cart = () => {
     null
   );
   const [productQuantity, setProductQuantity] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState<ScannedProduct | null>(null); // State for selected product
 
   const products = [
     {
@@ -161,6 +165,26 @@ const Cart = () => {
     setIsScannerOpen(true);
   };
 
+  const handleItemClick = (product: ScannedProduct) => {
+    setSelectedProduct(product); // Set the selected product to open CartCard
+  };
+
+  const handleCloseCartCard = () => {
+    setSelectedProduct(null); // Close CartCard
+  };
+
+  const handleUpdateProduct = (productId: string, quantity: number) => {
+    setScannedProducts((prev) =>
+      prev.map((product) =>
+        product.id === productId ? { ...product, quantity } : product
+      )
+    );
+  };
+
+  const handleRemoveProduct = (productId: string) => {
+    setScannedProducts((prev) => prev.filter((product) => product.id !== productId));
+  };
+
   const filteredProducts = scannedProducts.filter(
     (product) => product.cartNumber === tabs[activeTab]
   );
@@ -193,9 +217,20 @@ const Cart = () => {
 
       <div className="bg-white p-2 overflow-y-auto">
         {filteredProducts.map((product) => (
-          <CartItem key={product.id} product={product} />
+          <div key={product.id} onClick={() => handleItemClick(product)}>
+            <CartItem product={product} />
+          </div>
         ))}
       </div>
+
+      {selectedProduct && (
+        <CartCard
+          product={selectedProduct}
+          onClose={handleCloseCartCard}
+          handleUpdate={handleUpdateProduct}
+          handleRemove={handleRemoveProduct}
+        />
+      )}
 
       <button
         onClick={openScanner}
