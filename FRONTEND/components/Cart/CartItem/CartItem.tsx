@@ -25,15 +25,6 @@ const CartItem = ({ product }: { product: Product }) => {
           {product.quantity} X ₹{product.price}
         </div>
       </div>
-      <div className="flex items-center space-x-1 ml-2 flex-shrink-0">
-        <button className="w-6 h-6 flex items-center justify-center bg-gray-100 text-gray-600 rounded text-sm">
-          -
-        </button>
-        <span className="w-4 text-center text-sm">{product.quantity}</span>
-        <button className="w-6 h-6 flex items-center justify-center bg-gray-100 text-gray-600 rounded text-sm">
-          +
-        </button>
-      </div>
     </div>
   );
 };
