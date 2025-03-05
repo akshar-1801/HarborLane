@@ -32,6 +32,10 @@ const productSchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
+  imageUrl: {
+    type: String,
+    required: true,
+  },
   is_active: {
     type: Boolean,
     default: true,
@@ -51,10 +55,17 @@ const productSchema = new mongoose.Schema({
   },
 });
 
-// Middleware to update `updated_at` on document save
 productSchema.pre("save", function (next) {
   this.updated_at = Date.now();
   next();
+});
+
+productSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+  },
 });
 
 const Product = mongoose.model("Product", productSchema);

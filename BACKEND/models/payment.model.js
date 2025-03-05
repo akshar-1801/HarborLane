@@ -7,29 +7,68 @@ const paymentSchema = new mongoose.Schema(
       ref: "Customer",
       required: true,
     },
-    order_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Order",
+    userName: {
+      type: String,
       required: true,
     },
-    payment_method: {
+    phone_number: {
       type: String,
-      enum: ["cash", "credit_card", "UPI"],
+      required: true,
+    },
+    order_items: [
+      {
+        cart_number: {
+          type: Number,
+          required: true,
+          enum: [1, 2, 3],
+        },
+        product_barcode: {
+          type: String,
+          required: true,
+        },
+        product_name: {
+          type: String,
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    total_amount_per_cart: {
+      1: { type: Number, default: 0 },
+      2: { type: Number, default: 0 },
+      3: { type: Number, default: 0 },
+    },
+    verified_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Associate", // Associate who verified the cart
+    },
+    razorpay_order_id: {
+      type: String,
+      required: true,
+    },
+    razorpay_payment_id: {
+      type: String,
+      required: true,
+    },
+    razorpay_signature: {
+      type: String,
       required: true,
     },
     amount: {
       type: Number,
       required: true,
     },
-    transaction_id: {
+    payment_status: {
       type: String,
-      unique: true,
+      enum: ["pending", "success", "failure"],
       required: true,
-    },
-    status: {
-      type: String,
-      enum: ["successful", "failed"],
-      default: "successful",
     },
     created_at: {
       type: Date,
@@ -39,5 +78,4 @@ const paymentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Payment = mongoose.model("Payment", paymentSchema);
-module.exports = Payment;
+module.exports = mongoose.model("Payment", paymentSchema);

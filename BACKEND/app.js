@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -13,12 +14,14 @@ const paymentRoutes = require("./routes/payment.route");
 const orderRoutes = require("./routes/order.route");
 const employeeRoutes = require("./routes/employee.route");
 const adminRoutes = require("./routes/admin.route");
+const qrCodeRoutes = require("./routes/qrcode.route");
+const paymentRoute = require("./routes/payment.route");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(morgan("combined"));
+app.use(morgan("dev"));
 
 // Public Routes (No authentication needed)
 app.use("/api/product", productRoutes);
@@ -26,6 +29,8 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/customer", customerRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/order", orderRoutes);
+app.use("/api/qrcode", qrCodeRoutes);
+app.use("/api/payments", paymentRoute);
 
 // Public Employee Routes (Login should be accessible)
 const employeePublicRoutes = express.Router();
@@ -62,4 +67,10 @@ app.use((err, req, res, next) => {
 });
 
 // Export the app
-module.exports = { app };
+module.exports = { app, setIo };
+
+let io;
+function setIo(socketIoInstance) {
+  io = socketIoInstance;
+  app.set("io", io);
+}

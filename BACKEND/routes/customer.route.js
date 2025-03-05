@@ -9,7 +9,7 @@ const {
 } = require("../controllers/customer.controller");
 
 // Create a new customer
-router.post("/", createCustomer);
+router.post("/checkin/:qrCode", createCustomer);
 
 // Get all customers
 router.get("/", getAllCustomers);

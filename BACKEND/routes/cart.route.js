@@ -7,6 +7,7 @@ const {
   updateItemQuantity,
   deleteCart,
   requestVerification,
+  addMultipleItemsToCart, // Import the new controller function
 } = require("../controllers/cart.controller");
 
 // Get a cart by customer ID and cart number
@@ -26,5 +27,8 @@ router.delete("/:customer_id/:cart_number", deleteCart);
 
 // Customer requests verification
 router.put("/:customer_id/request-verification", requestVerification);
+
+// Route to add multiple items to the cart
+router.post("/:customer_id/add-multiple-items", addMultipleItemsToCart);
 
 module.exports = router;

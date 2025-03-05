@@ -6,6 +6,7 @@ const {
   getProductById,
   updateProduct,
   deleteProduct,
+  getProductByBarcode,
 } = require("../controllers/product.controller");
 
 // Create a new product
@@ -22,5 +23,8 @@ router.put("/:id", updateProduct);
 
 // Delete a product by ID
 router.delete("/:id", deleteProduct);
+
+// Get a product by barcode
+router.get("/barcode/:barcode", getProductByBarcode);
 
 module.exports = router;

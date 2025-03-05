@@ -16,7 +16,7 @@ const verifyCart = async (req, res) => {
     }
 
     // Check if employee has the necessary role to verify a cart (associates only)
-    if (employee.role !== "associate") {
+    if (employee.role !== "associate" && employee.role !== "admin") {
       return res
         .status(403)
         .json({ message: "Only associates can verify carts" });
@@ -73,7 +73,15 @@ const loginEmployee = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.status(200).json({ token, employee });
+    res.status(200).json({
+      token,
+      employee: {
+        _id: employee._id,
+        role: employee.role,
+        email: employee.email,
+        name: employee.name,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -88,13 +96,60 @@ const getCartsForVerification = async (req, res) => {
     });
 
     if (carts.length === 0) {
+      console.log("No carts waiting for verification");
       return res
         .status(404)
         .json({ message: "No carts waiting for verification" });
     }
 
-    res.status(200).json(carts);
+    // Process each cart to combine items with the same product_id
+    const processedCarts = carts.map((cart) => {
+      // Create a deep copy of the cart to avoid modifying the original
+      const cartObj = cart.toObject();
+
+      // Use a Map to combine items with the same product_id
+      const combinedItemsMap = new Map();
+
+      cart.cart_items.forEach((item) => {
+        if (!item.product_id) {
+          console.error("Invalid or missing product_id in cart item:", item);
+          return;
+        }
+
+        const productIdStr = item.product_id.toString();
+
+        if (combinedItemsMap.has(productIdStr)) {
+          // Update existing entry
+          const existingItem = combinedItemsMap.get(productIdStr);
+          existingItem.quantity += item.quantity;
+        } else {
+          // Create new entry
+          combinedItemsMap.set(productIdStr, {
+            product_id: productIdStr,
+            product_name: item.product_name,
+            quantity: item.quantity,
+            price: item.price,
+            added_at: item.added_at,
+            _id: item._id.toString(),
+          });
+        }
+      });
+
+      // Replace cart_items with the combined items
+      cartObj.cart_items = Array.from(combinedItemsMap.values());
+
+      return cartObj;
+    });
+
+    console.log("Processed carts:", processedCarts);
+
+    res.status(200).json(processedCarts);
+
+    // Emit the updated carts via WebSocket
+    const io = req.app.get("io");
+    io.emit("cart-verification-update", processedCarts);
   } catch (err) {
+    console.error("Error in getCartsForVerification:", err);
     res.status(500).json({ message: err.message });
   }
 };

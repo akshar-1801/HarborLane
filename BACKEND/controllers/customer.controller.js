@@ -1,11 +1,15 @@
 const Customer = require("../models/customer.model");
 const Cart = require("../models/cart.model");
+const jwt = require("jsonwebtoken");
 
 // Create a new customer
 const createCustomer = async (req, res) => {
   try {
+    const { firstName, lastName, phone } = req.body;
+    const { qrCode } = req.params;
+
     // Create new customer
-    const customer = new Customer(req.body);
+    const customer = new Customer({ firstName, lastName, phone, qrCode });
     await customer.save();
 
     // Create an empty cart for the new customer
@@ -18,7 +22,16 @@ const createCustomer = async (req, res) => {
 
     await cart.save();
 
-    res.status(201).json({ customer, cart });
+    // Generate a token for the session
+    const token = jwt.sign(
+      { customerId: customer._id },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    res.status(201).json({ customer, cart, token });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
