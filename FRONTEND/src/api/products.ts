@@ -1,4 +1,5 @@
 import api from "./api";
+import axios from "axios";
 
 export interface Product {
   name: string;
@@ -15,6 +16,25 @@ export interface Product {
   updated_at: string;
 }
 
+export interface Recommendation {
+  barcode: string;
+  category: string;
+  imageUrl: string;
+  name: string;
+  price: number;
+  similarity: number;
+  sub_category: string;
+  units_sold: number;
+}
+
+// Create a separate Axios instance for the recommender API
+const recommenderApi = axios.create({
+  baseURL: "http://192.168.137.37:5000",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 // Fetch all products
 export const fetchProducts = async (): Promise<Product[]> => {
   const response = await api.get<Product[]>("/product");
@@ -25,4 +45,13 @@ export const fetchProducts = async (): Promise<Product[]> => {
 export const fetchProductByBarcode = async (barcode: string): Promise<Product> => {
   const response = await api.get<Product>(`/product/barcode/${barcode}`);
   return response.data;
+};
+
+// Fetch recommendations based on cart barcodes
+export const fetchRecommendations = async (cart_barcodes: string[]): Promise<Recommendation[]> => {
+  const response = await recommenderApi.post<{ recommendations: Recommendation[] }>(
+    "/recommend",
+    { cart_barcodes }
+  );
+  return response.data.recommendations;
 };
