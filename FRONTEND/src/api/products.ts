@@ -29,7 +29,7 @@ export interface Recommendation {
 
 // Create a separate Axios instance for the recommender API
 const recommenderApi = axios.create({
-  baseURL: "http://192.168.137.37:5000",
+  baseURL: "https://harborlane-1.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },

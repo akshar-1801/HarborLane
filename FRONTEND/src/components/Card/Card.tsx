@@ -9,6 +9,9 @@ interface Product {
 }
 
 export default function Card({ product }: { product: Product }) {
+  const defaultImage =
+    "https://portal.adia.com.au/nologo.png"; // Path to your default image
+
   if (!product) {
     // Skeleton loading
     return (
@@ -27,12 +30,15 @@ export default function Card({ product }: { product: Product }) {
         alt={product.name}
         className="w-full h-32 object-cover rounded-md mb-2"
         style={{ aspectRatio: "1 / 1" }} // Ensure the image is square
+        onError={(e) => {
+          e.currentTarget.src = defaultImage;
+        }}
       />
       <h3 className="text-base font-medium leading-tight line-clamp-3">
         {product.name}
       </h3>{" "}
       {/* Adjust font size and line gap */}
-      <p className="text-sm text-gray-600">{product.price}</p>
+      <p className="text-sm text-gray-600">₹{product.price}</p>
     </div>
   );
 }

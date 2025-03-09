@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import pickle
 import os
@@ -7,6 +7,7 @@ import numpy as np
 from collections import defaultdict
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from send_invoice import generate_invoice_pdf, send_invoice_via_twilio, upload_to_dropbox
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -264,6 +265,53 @@ def health_check():
         'status': 'healthy',
         'model_loaded': recommender is not None
     })
+
+@app.route('/generate-invoice', methods=['POST'])
+def generate_invoice():
+    """API endpoint to generate and send invoice PDF"""
+    try:
+        # Get JSON data from request
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Invalid request. Missing data.'}), 400
+
+        # Validate required fields
+        required_fields = ['userName', 'phone_number']
+        missing_fields = [field for field in required_fields if field not in data]
+        if missing_fields:
+            return jsonify({'error': f'Missing required fields: {", ".join(missing_fields)}'}), 400
+
+        # Generate the invoice PDF
+        try:
+            pdf_path = generate_invoice_pdf(data)
+        except Exception as e:
+            return jsonify({'error': f'Failed to generate PDF: {str(e)}'}), 500
+
+        # Upload the PDF to Dropbox
+        try:
+            dropbox_link = upload_to_dropbox(pdf_path)
+            if not dropbox_link:
+                return jsonify({'error': 'Failed to generate Dropbox link'}), 500
+        except Exception as e:
+            return jsonify({'error': f'Failed to upload to Dropbox: {str(e)}'}), 500
+
+        # Send the invoice via Twilio
+        try:
+            if data.get('phone_number') and dropbox_link:
+                send_invoice_via_twilio(data['phone_number'], dropbox_link)
+        except Exception as e:
+            # Don't fail the whole request if SMS fails, just log the error
+            print(f"Warning: Failed to send SMS: {str(e)}")
+
+        # Return the file in the response
+        return jsonify({
+            'success': True,
+            'message': 'Invoice generated and sent successfully',
+            'download_link': dropbox_link
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     # Load the model before starting the server

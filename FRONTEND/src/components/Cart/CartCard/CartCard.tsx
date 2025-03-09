@@ -21,6 +21,7 @@ const CartCard: React.FC<CartCardProps> = ({
   handleRemove,
 }) => {
   const [quantity, setQuantity] = useState(product.quantity);
+  const defaultImage = "https://portal.adia.com.au/nologo.png"; // Path to your default image
 
   const handleIncrement = () => {
     setQuantity(quantity + 1);
@@ -56,6 +57,9 @@ const CartCard: React.FC<CartCardProps> = ({
             src={product.image}
             alt={product.name}
             className="w-32 h-32 object-cover rounded mb-4"
+            onError={(e) => {
+              e.currentTarget.src = defaultImage;
+            }}
           />
           <h3 className="text-lg font-medium text-gray-800 mb-2">
             {product.name}
