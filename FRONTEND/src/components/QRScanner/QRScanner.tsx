@@ -192,6 +192,7 @@ const QRScanner = () => {
         const user = {
           firstName: response.customer.firstName,
           lastName: response.customer.lastName,
+          phone: response.customer.phone,
         };
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("userId", response.customer._id.toString());

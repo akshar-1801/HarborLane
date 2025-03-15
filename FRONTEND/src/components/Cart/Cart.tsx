@@ -31,6 +31,7 @@ const Cart = () => {
   const [isCheckoutMode, setIsCheckoutMode] = useState(false);
   const [isPressing, setIsPressing] = useState(false);
   const longPressTimerRef = useRef<number | null>(null);
+  const defaultImage = "https://portal.adia.com.au/nologo.png";
 
   const cleanupScanner = useCallback(() => {
     const scannerElem = document.getElementById("scanner");
@@ -255,31 +256,35 @@ const Cart = () => {
 
       {/* Product Modal */}
       {showProductModal && scannedItem && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-80">
-            <div className="text-center text-white">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-80 border border-green-300">
+            <div className="text-center text-gray-900">
               <img
                 src={scannedItem.image}
                 alt={scannedItem.name}
-                className="w-32 h-32 mx-auto mb-4"
+                className="w-32 h-32 mx-auto mb-4 rounded-lg border border-gray-200"
+                onError={(e) => {
+                  e.currentTarget.src = defaultImage;
+                }}
               />
-              <h3 className="text-lg font-medium mb-4">{scannedItem.name}</h3>
-              <p className="text-xl mb-4">
-                ₹ {scannedItem.price} <span className="text-sm">Per Unit</span>
+              <h3 className="text-lg font-semibold mb-2">{scannedItem.name}</h3>
+              <p className="text-xl font-semibold text-green-600 mb-3">
+                ₹ {scannedItem.price}{" "}
+                <span className="text-sm text-gray-600">Per Unit</span>
               </p>
               <div className="flex items-center justify-center space-x-4 mb-4">
                 <button
                   onClick={() =>
                     setProductQuantity((prev) => Math.max(1, prev - 1))
                   }
-                  className="w-10 h-10 bg-gray-700 text-white rounded-full text-xl flex items-center justify-center"
+                  className="w-10 h-10 bg-gray-200 text-gray-700 rounded-full text-xl flex items-center justify-center hover:bg-gray-300 transition"
                 >
                   −
                 </button>
                 <span className="text-xl font-medium">{productQuantity}</span>
                 <button
                   onClick={() => setProductQuantity((prev) => prev + 1)}
-                  className="w-10 h-10 bg-green-500 text-white rounded-full text-xl flex items-center justify-center"
+                  className="w-10 h-10 bg-green-500 text-white rounded-full text-xl flex items-center justify-center hover:bg-green-600 transition"
                 >
                   +
                 </button>
@@ -287,7 +292,7 @@ const Cart = () => {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   onClick={handleRemove}
-                  className="w-full py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition"
+                  className="w-full py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
                 >
                   Remove
                 </button>

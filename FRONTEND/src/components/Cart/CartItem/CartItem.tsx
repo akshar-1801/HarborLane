@@ -8,6 +8,7 @@ interface Product {
 }
 
 const CartItem = ({ product }: { product: Product }) => {
+  const defaultImage = "https://portal.adia.com.au/nologo.png";
   return (
     <div className="flex items-center py-2 px-1 border-b border-gray-200">
       <div className="w-15 h-15 flex-shrink-0 mr-3">
@@ -15,6 +16,9 @@ const CartItem = ({ product }: { product: Product }) => {
           src={product.image}
           alt={product.name}
           className="w-full h-full object-cover rounded"
+          onError={(e) => {
+            e.currentTarget.src = defaultImage;
+          }}
         />
       </div>
       <div className="flex-grow min-w-0">

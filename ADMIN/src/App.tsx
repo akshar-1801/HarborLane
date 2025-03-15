@@ -12,6 +12,10 @@ import VerifyCarts from "./components/verify-carts";
 import { CustomersComponent } from "@/components/customers-chart";
 import { SalesComponent } from "@/components/sales-chart";
 import { Toaster } from "sonner";
+import TopProductsList from "./components/top-products";
+import EmployeeDashboard from "./components/employee/employee";
+import NewEmployee from "./components/employee/newemployee";
+import PaymentsTable from "./components/payments";
 
 function App() {
   const [role, setRole] = useState<string | null>(null);
@@ -41,14 +45,18 @@ function App() {
                   <div className="grid auto-rows-min gap-4 md:grid-cols-1">
                     <SalesComponent />
                   </div>
-                  <div className="grid auto-rows-min gap-4 md:grid-cols-2">
+                  <div className="grid auto-rows-min gap-4 md:grid-cols-2 ">
                     <CustomersComponent />
+                    <TopProductsList />
                   </div>
                 </>
               }
             />
             <Route path="qrcode-generator" element={<QRCodeGenerator />} />
             <Route path="verify-carts" element={<VerifyCarts />} />
+            <Route path="employees" element={<EmployeeDashboard />} />
+            <Route path="new-employee" element={<NewEmployee />} />
+            <Route path="payments" element={<PaymentsTable />} />
           </Route>
           <Route path="*" element={<Navigate to="/admin" />} />
         </Routes>

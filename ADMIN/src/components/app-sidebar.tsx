@@ -97,20 +97,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: UserRoundCog,
         items: [
           {
-            title: "Introduction",
-            url: "#",
+            title: "All Employees",
+            url: "/admin/employees",
           },
           {
-            title: "Get Started",
-            url: "#",
-          },
-          {
-            title: "Tutorials",
-            url: "#",
-          },
-          {
-            title: "Changelog",
-            url: "#",
+            title: "Add Employee",
+            url: "/admin/new-employee",
           },
         ],
       },

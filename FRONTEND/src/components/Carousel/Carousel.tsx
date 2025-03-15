@@ -5,7 +5,7 @@ import React from "react";
 const images = [
   "https://bigbasketoffer.com/images/Aata.jpg",
   "https://forum.valuepickr.com/uploads/default/original/3X/f/d/fdd08d7e38a627b05f167b0f6212085ba9be9d27.jpeg",
-  "https://dmart-files.b-cdn.net/1720600900.jpg",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1DGjF-c-Jhr1LjBbN_XfuXNGj86LeJKs_jw&s",
   "https://pbs.twimg.com/media/DnX-3_SWwAAObLd.jpg",
   "https://bigbasketoffer.com/images/Tea.jpg",
 ];

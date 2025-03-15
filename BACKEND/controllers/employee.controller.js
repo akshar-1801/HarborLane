@@ -43,6 +43,10 @@ const verifyCart = async (req, res) => {
     });
     await employee.save();
 
+    // Emit the updated cart via WebSocket
+    const io = req.app.get("io");
+    io.emit("cart-verification-update", [cart]);
+
     res.status(200).json({ message: "Cart verified successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });

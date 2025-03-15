@@ -3,14 +3,13 @@
 import React from "react";
 
 interface Product {
-  image: string;
+  imageUrl: string;
   name: string;
   price: string;
 }
 
 export default function Card({ product }: { product: Product }) {
-  const defaultImage =
-    "https://portal.adia.com.au/nologo.png"; // Path to your default image
+  const defaultImage = "https://portal.adia.com.au/nologo.png"; // Path to your default image
 
   if (!product) {
     // Skeleton loading
@@ -26,7 +25,7 @@ export default function Card({ product }: { product: Product }) {
   return (
     <div className="p-3 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
       <img
-        src={product.image}
+        src={product.imageUrl}
         alt={product.name}
         className="w-full h-32 object-cover rounded-md mb-2"
         style={{ aspectRatio: "1 / 1" }} // Ensure the image is square

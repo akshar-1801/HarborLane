@@ -30,6 +30,7 @@ export function Checkout() {
     useState(false);
   const { cartItems, setCartItems } = useUser();
   const userId = localStorage.getItem("userId");
+  const defaultImage = "https://portal.adia.com.au/nologo.png";
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -133,8 +134,17 @@ export function Checkout() {
               razorpay_payment_id: paymentResponse.razorpay_payment_id,
               razorpay_signature: paymentResponse.razorpay_signature,
               customer_id: userId,
-              userName: "User Name",
-              phone_number: "7698194594",
+              userName:
+                (localStorage.getItem("user")
+                  ? JSON.parse(localStorage.getItem("user")!)?.firstName
+                  : "User Name") +
+                " " +
+                (localStorage.getItem("user")
+                  ? JSON.parse(localStorage.getItem("user")!)?.lastName
+                  : ""),
+              phone_number: localStorage.getItem("user")
+                ? JSON.parse(localStorage.getItem("user")!).phone
+                : "7698194594",
               amount: overallTotal,
               // Modified order_items to include string identifiers instead of expecting ObjectIds
               order_items: cartItems.map((item) => ({
@@ -265,6 +275,9 @@ export function Checkout() {
                     src={item.image}
                     alt={item.name}
                     className="w-16 h-16 object-cover rounded-md mr-4"
+                    onError={(e) => {
+                      e.currentTarget.src = defaultImage;
+                    }}
                   />
                   <div>
                     <h3 className="text-lg font-medium text-gray-800">

@@ -51,10 +51,12 @@ export default function CartDetails({
         Cart Items ({selectedCart.cart_items.length})
       </h3>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {selectedCart.cart_items.map((item) => (
-          <CartItemCard key={item._id} item={item} />
-        ))}
+      <div className="max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-green-400 scrollbar-track-gray-200 p-2 rounded-md ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {selectedCart.cart_items.map((item) => (
+            <CartItemCard key={item._id} item={item} />
+          ))}
+        </div>
       </div>
     </div>
   );
