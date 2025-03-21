@@ -16,6 +16,7 @@ import TopProductsList from "./components/top-products";
 import EmployeeDashboard from "./components/employee/employee";
 import NewEmployee from "./components/employee/newemployee";
 import PaymentsTable from "./components/payments";
+import ProductList from "./components/product/product";
 
 function App() {
   const [role, setRole] = useState<string | null>(null);
@@ -57,6 +58,7 @@ function App() {
             <Route path="employees" element={<EmployeeDashboard />} />
             <Route path="new-employee" element={<NewEmployee />} />
             <Route path="payments" element={<PaymentsTable />} />
+            <Route path="products" element={<ProductList />} />
           </Route>
           <Route path="*" element={<Navigate to="/admin" />} />
         </Routes>
