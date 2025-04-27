@@ -7,6 +7,8 @@ const { Server } = require("socket.io");
 dotenv.config();
 
 const DB_URI = process.env.DB_URI;
+const PORT = process.env.PORT || 3000;
+const FRONTEND_URL = process.env.FRONTEND_URL || "*";
 
 mongoose
   .connect(DB_URI, {
@@ -21,62 +23,75 @@ mongoose
     process.exit(1);
   });
 
-const PORT = process.env.PORT || 3000;
-let server = http.createServer(app); // Use let to allow reassignment
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // Adjust this based on your frontend URL
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
+  connectionStateRecovery: {},
 });
 
+// Set the global io instance using our helper function from app.js
 setIo(io);
+
+// Comprehensive Socket.IO connection handler
+io.on("connection", (socket) => {
+  console.log("New client connected:", {
+    id: socket.id,
+    time: new Date().toISOString(),
+    address: socket.handshake.address,
+  });
+
+  socket.on("verification-request", (data) => {
+    console.log("Verification request received:", {
+      socketId: socket.id,
+      data: data,
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  socket.on("error", (error) => {
+    console.error("Socket error:", {
+      socketId: socket.id,
+      error: error,
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.log("Client disconnected:", {
+      id: socket.id,
+      reason: reason,
+      time: new Date().toISOString(),
+    });
+  });
+});
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(`Frontend URL configured: ${FRONTEND_URL}`);
+  console.log(
+    `Database URI: ${DB_URI.replace(/\/\/.*:.*@/, "//[REDACTED]:")}}`
+  );
 });
 
-process.on("SIGINT", () => {
-  console.log("Shutting down server...");
+const gracefulShutdown = (signal) => {
+  console.log(`Received ${signal}. Starting graceful shutdown...`);
+
   server.close(() => {
-    console.log("Server closed.");
+    console.log("HTTP server closed.");
+
+    io.close(() => {
+      console.log("Socket.IO connections closed.");
+    });
+
     mongoose.connection.close(false, () => {
       console.log("Database connection closed.");
       process.exit(0);
     });
   });
-});
+};
 
-process.on("SIGTERM", () => {
-  console.log("Shutting down server...");
-  server.close(() => {
-    console.log("Server closed.");
-    mongoose.connection.close(false, () => {
-      console.log("Database connection closed.");
-      process.exit(0);
-    });
-  });
-});
-
-io.on("connection", (socket) => {
-  console.log("A user connected");
-
-  // Send the latest QR code when an admin connects
-  const latestQRCode = app.get("latestQRCode");
-  if (latestQRCode) {
-    socket.emit("qr-updated", latestQRCode);
-  }
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
-});
-
-app.post("/verify-cart", (req, res) => {
-  // Your cart verification logic here
-
-  // Emit the cart-verified event
-  io.emit("cart-verified", { message: "Cart has been verified" });
-
-  res.status(200).send("Cart verified");
-});
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));

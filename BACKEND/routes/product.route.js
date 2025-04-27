@@ -8,21 +8,30 @@ const {
   deleteProduct,
   getProductByBarcode,
 } = require("../controllers/product.controller");
+const {
+  authenticateUser,
+  authorizeRole,
+} = require("../middlewares/authMiddleware");
 
 // Create a new product
-router.post("/", createProduct);
+router.post("/", authenticateUser, authorizeRole(["admin"]), createProduct);
 
 // Get all products
-router.get("/", getAllProducts);
+router.get("/", authenticateUser, authorizeRole(["admin"]), getAllProducts);
 
 // Get a single product by ID
 router.get("/:id", getProductById);
 
 // Update a product by ID
-router.put("/:id", updateProduct);
+router.put("/:id", authenticateUser, authorizeRole(["admin"]), updateProduct);
 
 // Delete a product by ID
-router.delete("/:id", deleteProduct);
+router.delete(
+  "/:id",
+  authenticateUser,
+  authorizeRole(["admin"]),
+  deleteProduct
+);
 
 // Get a product by barcode
 router.get("/barcode/:barcode", getProductByBarcode);

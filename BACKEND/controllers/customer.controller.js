@@ -25,9 +25,9 @@ const createCustomer = async (req, res) => {
     // Generate a token for the session
     const token = jwt.sign(
       { customerId: customer._id },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET_KEY,
       {
-        expiresIn: "1h",
+        expiresIn: "5h",
       }
     );
 

@@ -118,7 +118,8 @@ export function Checkout() {
       const { id: order_id, currency, products } = response.data;
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        // key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: "rzp_test_bKWKJEeA520i0h",
         amount: overallTotal * 100,
         currency,
         name: "Your Store Name",
@@ -161,7 +162,7 @@ export function Checkout() {
             if (verifyResponse.data.success) {
               setCartItems([]);
               toast.success(
-                "Payment successful! The receipt will be provided via whatsapp.",
+                "Payment successful! The receipt will be provided via sms.",
                 {
                   duration: 5000,
                   position: "top-center",
@@ -342,7 +343,7 @@ export function Checkout() {
               <p className="text-gray-600 text-center mb-2">
                 Your cart number is:{" "}
                 <span className="font-semibold">
-                  {localStorage.getItem("cartId") || "N/A"}
+                  {localStorage.getItem("cartId")?.slice(-5) || "N/A"}
                 </span>
               </p>
               <p className="text-gray-600 text-center mb-4">

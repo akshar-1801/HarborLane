@@ -30,123 +30,134 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     avatar: "/avatars/default.jpg", // Default avatar
   };
 
+  const fullNavMain = [
+    {
+      title: "Customers",
+      url: "#",
+      icon: Users,
+      isActive: true,
+      items: [
+        {
+          title: "QR-Generator",
+          url: "/admin/qrcode-generator",
+        },
+        {
+          title: "Verify Cart",
+          url: "/admin/verify-carts",
+        },
+        {
+          title: "Payments",
+          url: "/admin/payments",
+        },
+      ],
+    },
+    {
+      title: "Product",
+      url: "#",
+      icon: ShoppingBag,
+      items: [
+        {
+          title: "Product List",
+          url: "/admin/products",
+        },
+        {
+          title: "Add Product",
+          url: "/admin/add-product",
+        },
+      ],
+    },
+    {
+      title: "Sales",
+      url: "#",
+      icon: Tag,
+      items: [
+        {
+          title: "Introduction",
+          url: "#",
+        },
+        {
+          title: "Get Started",
+          url: "#",
+        },
+        {
+          title: "Tutorials",
+          url: "#",
+        },
+        {
+          title: "Changelog",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Employees",
+      url: "#",
+      icon: UserRoundCog,
+      items: [
+        {
+          title: "All Employees",
+          url: "/admin/employees",
+        },
+        {
+          title: "Add Employee",
+          url: "/admin/new-employee",
+        },
+      ],
+    },
+    {
+      title: "Settings",
+      url: "#",
+      icon: Settings2,
+      items: [
+        {
+          title: "General",
+          url: "#",
+        },
+        {
+          title: "Team",
+          url: "#",
+        },
+        {
+          title: "Billing",
+          url: "#",
+        },
+        {
+          title: "Limits",
+          url: "#",
+        },
+      ],
+    },
+  ];
+
+  const associateOnlyNavMain = [
+    {
+      title: "Customers",
+      url: "#",
+      icon: Users,
+      isActive: true,
+      items: [
+        {
+          title: "QR-Generator",
+          url: "/associate/qrcode-generator",
+        },
+        {
+          title: "Verify Cart",
+          url: "/associate/verify-carts",
+        },
+        {
+          title: "Payments",
+          url: "/associate/payments",
+        },
+      ],
+    },
+  ];
+
+  const userRole = localStorage.getItem("userRole");
+  const navItems = userRole === "admin" ? fullNavMain : associateOnlyNavMain;
+
   const data = {
     user,
-    navMain: [
-      {
-        title: "Customers",
-        url: "#",
-        icon: Users,
-        isActive: true,
-        items: [
-          {
-            title: "QR-Generator",
-            url: "/admin/qrcode-generator",
-          },
-          {
-            title: "Verify Cart",
-            url: "/admin/verify-carts",
-          },
-          {
-            title: "Payments",
-            url: "/admin/payments",
-          },
-        ],
-      },
-      {
-        title: "Product",
-        url: "#",
-        icon: ShoppingBag,
-        items: [
-          {
-            title: "Product List",
-            url: "/admin/products",
-          },
-          {
-            title: "Categories",
-            url: "/admin/categories",
-          },
-        ],
-      },
-      {
-        title: "Sales",
-        url: "#",
-        icon: Tag,
-        items: [
-          {
-            title: "Introduction",
-            url: "#",
-          },
-          {
-            title: "Get Started",
-            url: "#",
-          },
-          {
-            title: "Tutorials",
-            url: "#",
-          },
-          {
-            title: "Changelog",
-            url: "#",
-          },
-        ],
-      },
-      {
-        title: "Employees",
-        url: "#",
-        icon: UserRoundCog,
-        items: [
-          {
-            title: "All Employees",
-            url: "/admin/employees",
-          },
-          {
-            title: "Add Employee",
-            url: "/admin/new-employee",
-          },
-        ],
-      },
-      {
-        title: "Settings",
-        url: "#",
-        icon: Settings2,
-        items: [
-          {
-            title: "General",
-            url: "#",
-          },
-          {
-            title: "Team",
-            url: "#",
-          },
-          {
-            title: "Billing",
-            url: "#",
-          },
-          {
-            title: "Limits",
-            url: "#",
-          },
-        ],
-      },
-    ],
-    // projects: [
-    //   {
-    //     name: "Design Engineering",
-    //     url: "#",
-    //     icon: Frame,
-    //   },
-    //   {
-    //     name: "Sales & Marketing",
-    //     url: "#",
-    //     icon: PieChart,
-    //   },
-    //   {
-    //     name: "Travel",
-    //     url: "#",
-    //     icon: Map,
-    //   },
-    // ],
+    navMain: navItems,
   };
 
   return (
@@ -156,7 +167,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

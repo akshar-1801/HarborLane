@@ -15,7 +15,6 @@ const orderRoutes = require("./routes/order.route");
 const employeeRoutes = require("./routes/employee.route");
 const adminRoutes = require("./routes/admin.route");
 const qrCodeRoutes = require("./routes/qrcode.route");
-const paymentRoute = require("./routes/payment.route");
 
 const app = express();
 
@@ -30,12 +29,10 @@ app.use("/api/customer", customerRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/qrcode", qrCodeRoutes);
-app.use("/api/payments", paymentRoute);
 
 // Public Employee Routes (Login should be accessible)
 const employeePublicRoutes = express.Router();
 const { loginEmployee } = require("./controllers/employee.controller");
-
 employeePublicRoutes.post("/login", loginEmployee);
 app.use("/api/employee", employeePublicRoutes);
 
@@ -66,11 +63,21 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Something went wrong!" });
 });
 
-// Export the app
-module.exports = { app, setIo };
-
+// --- Socket.IO helpers ---
+// These variables and functions let us set the Socket.IO instance and emit events.
 let io;
 function setIo(socketIoInstance) {
   io = socketIoInstance;
   app.set("io", io);
 }
+
+const emitEvent = (eventName, data) => {
+  if (io) {
+    io.emit(eventName, data);
+  } else {
+    console.error("Socket.IO instance is not initialized.");
+  }
+};
+
+// Export the app, setIo, and emitEvent as a single object.
+module.exports = { app, setIo, emitEvent };

@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
-const SECRET_KEY = "HaBourLaNe";
+const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 // Middleware to verify JWT token
 const authenticateUser = (req, res, next) => {

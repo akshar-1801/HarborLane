@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Cart } from "@/api/cart"; // Import Cart interface
+import { Cart } from "@/api/cart";
 
 interface CartTableProps {
   carts: Cart[];
@@ -36,7 +36,7 @@ export default function CartTable({
             onClick={() => setSelectedCart(cart)}
             className="cursor-pointer hover:bg-gray-50"
           >
-            <TableCell>{cart._id}</TableCell>
+            <TableCell>{cart._id.slice(-5)}</TableCell>
             <TableCell>{cart.cart_items?.length || 0}</TableCell>
             <TableCell>
               {cart.verified ? (

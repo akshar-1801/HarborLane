@@ -3,6 +3,7 @@ import api from "./api";
 export interface CartItem {
   product_id: string;
   product_name: string;
+  imageUrl: string;
   quantity: number;
   price: number;
   added_at: Date;

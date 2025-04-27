@@ -25,25 +25,35 @@ const QRScanner = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (scanning) {
-      navigator.mediaDevices
-        .getUserMedia({ video: { facingMode: "environment" } })
-        .then(() => setHasPermission(true))
-        .catch(() => {
-          alert("Camera access denied! Please allow camera permissions.");
-          setScanning(false);
-        });
+  const startScanner = async () => {
+    try {
+      // Request camera permissions before starting the scanner
+      await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
+      setHasPermission(true);
+      setScanning(true);
+    } catch (error) {
+      alert("Camera access denied! Please allow camera permissions.");
+      setScanning(false);
     }
+  };
 
-    return () => {
-      if (scanner) {
-        scanner.clear().catch((error) => {
-          console.error("Failed to clear scanner on unmount:", error);
-        });
-      }
-    };
-  }, [scanning]);
+  const stopScanner = () => {
+    if (scanner) {
+      scanner
+        .clear()
+        .then(() => {
+          setScanner(null);
+          setScanning(false);
+          setHasPermission(false);
+        })
+        .catch((error) => console.error("Failed to stop scanner:", error));
+    } else {
+      setScanning(false);
+      setHasPermission(false);
+    }
+  };
 
   useEffect(() => {
     if (scanning && hasPermission && !scanner) {
@@ -63,7 +73,6 @@ const QRScanner = () => {
           console.log("Scanned QR Code:", decodedText);
           setQrCode(decodedText);
 
-          // Call verifyScannedQRCode after a successful scan
           try {
             const response = await verifyScannedQRCode(decodedText);
             if (response.success) {
@@ -92,26 +101,6 @@ const QRScanner = () => {
       setScanner(qrScanner);
     }
   }, [scanning, hasPermission, scanner]);
-
-  const startScanner = () => {
-    setScanning(true);
-  };
-
-  const stopScanner = () => {
-    if (scanner) {
-      scanner
-        .clear()
-        .then(() => {
-          setScanner(null);
-          setScanning(false);
-          setHasPermission(false);
-        })
-        .catch((error) => console.error("Failed to stop scanner:", error));
-    } else {
-      setScanning(false);
-      setHasPermission(false);
-    }
-  };
 
   const validateInput = (name: string, value: string) => {
     switch (name) {
@@ -231,7 +220,15 @@ const QRScanner = () => {
             {scanning && hasPermission && (
               <>
                 <motion.div
-                  className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center"
+                  style={{
+                    position: "fixed",
+                    inset: "0",
+                    backgroundColor: "rgba(0, 0, 0, 0.7)",
+                    zIndex: 50,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -239,7 +236,14 @@ const QRScanner = () => {
                 />
 
                 <motion.div
-                  className="fixed inset-0 flex items-center justify-center z-50"
+                  style={{
+                    position: "fixed",
+                    inset: "0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 50,
+                  }}
                   initial={{ opacity: 0, y: 50, scale: 0.9 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 50, scale: 0.9 }}
@@ -269,7 +273,7 @@ const QRScanner = () => {
         </>
       ) : (
         <motion.div
-          className="w-full max-w-md h-full overflow-auto"
+          {...{ className: "w-full max-w-md h-full overflow-auto" }}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -278,116 +282,117 @@ const QRScanner = () => {
             Customer Details
           </h1>
 
-          <motion.form
-            onSubmit={handleSubmit}
-            className="bg-white p-5 rounded-2xl shadow-xl space-y-6"
-          >
-            <div className="space-y-1">
-              <label className="block text-sm font-medium text-gray-700">
-                First Name
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                value={firstName}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-3 rounded-lg border ${
-                  errors.firstName ? "border-red-500" : "border-gray-300"
-                } focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors`}
-                placeholder="Enter your first name"
-                disabled={isSubmitting}
-              />
-              {errors.firstName && (
-                <p className="text-red-500 text-xs">{errors.firstName}</p>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <label className="block text-sm font-medium text-gray-700">
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                value={lastName}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-3 rounded-lg border ${
-                  errors.lastName ? "border-red-500" : "border-gray-300"
-                } focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors`}
-                placeholder="Enter your last name"
-                disabled={isSubmitting}
-              />
-              {errors.lastName && (
-                <p className="text-red-500 text-xs">{errors.lastName}</p>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <label className="block text-sm font-medium text-gray-700">
-                Phone Number
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                  +91
-                </span>
+          <form onSubmit={handleSubmit}>
+            <motion.div
+              {...{ className: "bg-white p-5 rounded-2xl shadow-xl space-y-6" }}
+            >
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  First Name
+                </label>
                 <input
-                  type="tel"
-                  name="phoneNumber"
-                  value={phoneNumber}
+                  type="text"
+                  name="firstName"
+                  value={firstName}
                   onChange={handleInputChange}
-                  maxLength={10}
-                  pattern="\d*"
-                  inputMode="numeric"
-                  className={`w-full pl-12 pr-4 py-3 rounded-lg border ${
-                    errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.firstName ? "border-red-500" : "border-gray-300"
                   } focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors`}
-                  placeholder="Enter 10-digit number"
+                  placeholder="Enter your first name"
                   disabled={isSubmitting}
                 />
+                {errors.firstName && (
+                  <p className="text-red-500 text-xs">{errors.firstName}</p>
+                )}
               </div>
-              {errors.phoneNumber && (
-                <p className="text-red-500 text-xs">{errors.phoneNumber}</p>
-              )}
-            </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className={`w-full py-3 px-4 font-medium rounded-lg shadow-lg 
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={lastName}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.lastName ? "border-red-500" : "border-gray-300"
+                  } focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors`}
+                  placeholder="Enter your last name"
+                  disabled={isSubmitting}
+                />
+                {errors.lastName && (
+                  <p className="text-red-500 text-xs">{errors.lastName}</p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    +91
+                  </span>
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={phoneNumber}
+                    onChange={handleInputChange}
+                    maxLength={10}
+                    pattern="\d*"
+                    inputMode="numeric"
+                    className={`w-full pl-12 pr-4 py-3 rounded-lg border ${
+                      errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                    } focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors`}
+                    placeholder="Enter 10-digit number"
+                    disabled={isSubmitting}
+                  />
+                </div>
+                {errors.phoneNumber && (
+                  <p className="text-red-500 text-xs">{errors.phoneNumber}</p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full py-3 px-4 font-medium rounded-lg shadow-lg 
                 transition-all duration-300 flex items-center justify-center
                 ${
                   isSubmitting
                     ? "bg-green-600 cursor-not-allowed"
                     : "bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-500 focus:ring-opacity-50"
                 } text-white`}
-            >
-              {isSubmitting ? (
-                <div className="flex items-center">
-                  <svg
-                    className="animate-spin h-5 w-5 mr-3 text-white"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Starting...
-                </div>
-              ) : (
-                "Start Shopping"
-              )}
-            </button>
-          </motion.form>
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center">
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3 text-white"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Starting...
+                  </div>
+                ) : (
+                  "Start Shopping"
+                )}
+              </button>
+            </motion.div>
+          </form>
         </motion.div>
       )}
     </div>

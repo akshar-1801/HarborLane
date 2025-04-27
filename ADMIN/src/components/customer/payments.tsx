@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { format, parseISO, isSameDay, subDays } from "date-fns";
+import { format, parseISO, isSameDay } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Table,
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getPayments, Payment } from "../api/payment";
+import { getPayments, Payment } from "../../api/payment";
 import {
   ChevronDown,
   Calendar as CalendarIcon,

@@ -34,7 +34,7 @@ const NewEmployee: React.FC = () => {
       await employeeApi.createEmployee(employeeData);
 
       setSuccessMessage(
-        `✅ Successfully created ${employeeData.name} as ${employeeData.role}`
+        `Successfully created ${employeeData.name} as ${employeeData.role}`
       );
 
       setName("");
@@ -47,7 +47,7 @@ const NewEmployee: React.FC = () => {
       }, 1500);
     } catch (err: any) {
       console.error("Error creating employee:", err);
-      setError(err?.message || "❌ Failed to create employee.");
+      setError(err?.message || "Failed to create employee.");
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,6 @@ const NewEmployee: React.FC = () => {
           Add New Employee
         </h2>
 
-        {/* Error / Success Messages */}
         {error && (
           <div className="mb-4 p-3 text-red-700 bg-red-100 border-l-4 border-red-500 rounded-md">
             {error}

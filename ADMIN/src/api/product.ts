@@ -1,7 +1,7 @@
 import api from "./api";
 
 export interface Product {
-  id: string;
+  _id?: string;
   name: string;
   description: string;
   price: number;
@@ -24,23 +24,23 @@ export const fetchProducts = async (): Promise<Product[]> => {
 
 // Fetch a product by ID
 export const fetchProductById = async (id: string): Promise<Product> => {
-  const response = await api.get<Product>(`/products/${id}`);
+  const response = await api.get<Product>(`/product/${id}`);
   return response.data;
 };
 
 // Create a new product
 export const createProduct = async (product: Product): Promise<Product> => {
-  const response = await api.post<Product>("/products", product);
+  const response = await api.post<Product>("/product", product);
   return response.data;
 };
 
 // Update a product by ID
 export const updateProduct = async (id: string, product: Partial<Product>): Promise<Product> => {
-  const response = await api.put<Product>(`/products/${id}`, product);
+  const response = await api.put<Product>(`/product/${id}`, product);
   return response.data;
 };
 
 // Delete a product by ID
 export const deleteProduct = async (id: string): Promise<void> => {
-  await api.delete(`/products/${id}`);
+  await api.delete(`/product/${id}`);
 };

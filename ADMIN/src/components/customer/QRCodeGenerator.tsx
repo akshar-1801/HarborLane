@@ -6,27 +6,25 @@ import { v4 as uuidv4 } from "uuid";
 import { updateQRCode } from "../../api/qrcode";
 import { io } from "socket.io-client";
 
-// Connect WebSocket to backend (Ensure this is correct)
 const socket = io(import.meta.env.VITE_WS_URL || "http://localhost:3000");
 
 export default function QRCodeGenerator() {
   const [qrValue, setQrValue] = useState("");
 
-  // Function to generate and send a new QR code
   const generateNewQR = async () => {
     const newQR = uuidv4();
     console.log(`[GENERATE] New QR Code: ${newQR}`);
 
     setQrValue(newQR);
-    await updateQRCode(newQR); // Send new QR to backend
+    await updateQRCode(newQR);
   };
 
   useEffect(() => {
-    generateNewQR(); // Generate QR when component mounts
+    generateNewQR();
 
     const handleQRScanned = () => {
       console.log("[SOCKET] QR scanned! Generating new...");
-      generateNewQR(); // Generate new QR after scan
+      generateNewQR();
     };
 
     const handleQRUpdated = (newQR: string) => {

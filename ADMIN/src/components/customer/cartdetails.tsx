@@ -34,7 +34,7 @@ export default function CartDetails({
           {selectedCart.verified ? "Verified" : "Pending"}
         </Badge>
       </div>
-      <p className="text-sm text-gray-500 mt-1">ID: {selectedCart._id}</p>
+      <p className="text-sm text-gray-500 mt-1">ID: {selectedCart._id.slice(-5)}</p>
 
       <Button
         variant={selectedCart.verified ? "outline" : "default"}

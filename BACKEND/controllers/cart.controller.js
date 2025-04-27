@@ -1,8 +1,9 @@
 const Cart = require("../models/cart.model");
 const Product = require("../models/product.model");
-const WebSocket = require("ws");
+// const WebSocket = require("ws");
+const { emitEvent } = require("../app");
 
-const wss = new WebSocket.Server({ port: 8080 });
+// const wss = new WebSocket.Server({ port: 8080 });
 
 const getCart = async (req, res) => {
   try {
@@ -153,30 +154,33 @@ const deleteCart = async (req, res) => {
   }
 };
 
-// Customer requests verification
 const requestVerification = async (req, res) => {
   try {
     const { customer_id } = req.params;
 
-    const cart = await Cart.findOne({ customer_id, verified: false });
+    const cart = await Cart.findOneAndUpdate(
+      { customer_id, verified: false },
+      { wants_verification: true },
+      { new: true }
+    );
+
     if (!cart) {
       return res
         .status(404)
         .json({ message: "Cart not found or already verified" });
     }
 
-    cart.wants_verification = true;
-    await cart.save();
-
-    // Emit WebSocket event
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ event: "cartVerified", cart }));
-      }
-    });
+    const io = req.app.get("io");
+    if (io) {
+      console.log("Emitting new-cart-for-verification to all clients");
+      io.emit("new-cart-for-verification", cart.toObject());
+    } else {
+      console.error("Socket.IO instance not available");
+    }
 
     res.status(200).json({ message: "Verification requested successfully" });
   } catch (err) {
+    console.error("Error in requestVerification:", err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -192,7 +196,7 @@ const addMultipleItemsToCart = async (req, res) => {
     }
 
     for (const item of cart_items) {
-      const { cart_number, product_id, quantity } = item; // product_id actually contains barcode
+      const { cart_number, product_id, quantity } = item;
 
       // Find product by barcode instead of _id
       const product = await Product.findOne({ barcode: product_id });
@@ -215,6 +219,7 @@ const addMultipleItemsToCart = async (req, res) => {
           cart_number,
           product_id: product._id,
           product_name: product.name,
+          imageUrl: product.imageUrl,
           quantity,
           price: product.price,
           added_at: new Date(),
@@ -224,6 +229,12 @@ const addMultipleItemsToCart = async (req, res) => {
 
     cart.wants_verification = true;
     await cart.save();
+
+    const io = req.app.get("io");
+    if (io) {
+      console.log("Emitting new-cart-for-verification from multiple items");
+      io.emit("new-cart-for-verification", cart.toObject());
+    }
 
     res.status(200).json({ cart_id: cart._id });
   } catch (err) {

@@ -20,6 +20,7 @@ function App() {
           {/* User cart manager page */}
           <Route path="/checkout" element={<Checkout />} />
           {/* User cart manager page */}
+          <Route path="*" element={<Home />} />
         </Routes>
       </Router>
     </UserProvider>

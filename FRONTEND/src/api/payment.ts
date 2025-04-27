@@ -24,6 +24,6 @@ interface VerifyPaymentData {
 }
 
 export const makePaymentRequest = {
-  createOrder: (data: CreateOrderData) => api.post("/payments/create-order", data),
-  verifyPayment: (data: VerifyPaymentData) => api.post("/payments/verify-payment", data),
+  createOrder: (data: CreateOrderData) => api.post("/payment/create-order", data),
+  verifyPayment: (data: VerifyPaymentData) => api.post("/payment/verify-payment", data),
 };

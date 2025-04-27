@@ -47,7 +47,7 @@ const paymentSchema = new mongoose.Schema(
     },
     verified_by: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Associate", // Associate who verified the cart
+      ref: "Associate",
     },
     razorpay_order_id: {
       type: String,

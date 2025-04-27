@@ -25,7 +25,6 @@ const EmployeeDashboard: React.FC = () => {
       const data = await employeeApi.getAllEmployees();
       setEmployees(data);
 
-      // Calculate stats
       const admins = data.filter((emp) => emp.role === "admin").length;
       const totalVerifiedCarts = data.reduce(
         (total, emp) => total + emp.verified_carts.length,
@@ -57,7 +56,6 @@ const EmployeeDashboard: React.FC = () => {
     fetchEmployees();
   };
 
-  // Sort employees by most verified carts
   const sortedEmployees = [...employees].sort(
     (a, b) => b.verified_carts.length - a.verified_carts.length
   );
@@ -78,7 +76,7 @@ const EmployeeDashboard: React.FC = () => {
         </div>
         <button
           onClick={handleRefresh}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
+          className="bg-black text-white px-4 py-2 rounded-md transition-colors"
         >
           Try Again
         </button>
@@ -92,14 +90,8 @@ const EmployeeDashboard: React.FC = () => {
         <h1 className="text-2xl font-bold">Employee Dashboard</h1>
         <div className="space-x-2">
           <button
-            onClick={handleRefresh}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition-colors"
-          >
-            Refresh
-          </button>
-          <button
             onClick={handleAddNewClick}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
+            className="bg-black  text-white px-4 py-2 rounded-md transition-colors cursor-pointer"
           >
             Add New Employee
           </button>

@@ -7,7 +7,7 @@ const {
   updateItemQuantity,
   deleteCart,
   requestVerification,
-  addMultipleItemsToCart, // Import the new controller function
+  addMultipleItemsToCart,
 } = require("../controllers/cart.controller");
 
 // Get a cart by customer ID and cart number
