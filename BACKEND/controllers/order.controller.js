@@ -81,7 +81,7 @@ const getAllOrders = async (req, res) => {
     }
 
     // Calculate start date (use dummy data range for testing)
-    const endDate = new Date("2025-03-31"); // Matches dummy data; use new Date() in production
+    const endDate = new Date("2025-03-31");
     const startDate = new Date(endDate);
     startDate.setDate(endDate.getDate() - days);
 

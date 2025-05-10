@@ -10,7 +10,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from send_invoice import generate_invoice_pdf, send_invoice_via_twilio, upload_to_dropbox
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)  
 
 class ProductRecommender:
     def __init__(self):
@@ -20,24 +20,21 @@ class ProductRecommender:
         self.product_keys = []
         self.product_idx_map = {}
     
-    # Get top selling products
     def get_top_selling_products(self, num_recommendations=12, exclude_barcodes=None):
         if exclude_barcodes is None:
             exclude_barcodes = []
         
-        # Sort products by units_sold in descending order
         sorted_products = sorted(
             [p for barcode, p in self.product_data.items() if barcode not in exclude_barcodes],
             key=lambda x: x.get('units_sold', 0),
             reverse=True
         )
         
-        # Create recommendation objects from top selling products
         recommendations = []
         for product in sorted_products[:num_recommendations]:
             recommendations.append({
                 'barcode': product['barcode'],
-                'similarity': 0.5,  # Default similarity for top selling products
+                'similarity': 0.5,  
                 'category': product['category'],
                 'sub_category': product.get('sub_category', ''),
                 'price': product['price'],
@@ -95,7 +92,7 @@ class ProductRecommender:
                 rec['similarity'] *= 1.2
             
             # Popularity boost with diminishing returns
-            popularity_boost = min(1 + (rec['units_sold'] / 1000), 1.5)  # Cap at 1.5x
+            popularity_boost = min(1 + (rec['units_sold'] / 1000), 1.5)
             rec['similarity'] *= popularity_boost
             
             # Price range similarity boost

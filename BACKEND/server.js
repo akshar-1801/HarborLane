@@ -35,7 +35,6 @@ const io = new Server(server, {
 // Set the global io instance using our helper function from app.js
 setIo(io);
 
-// Comprehensive Socket.IO connection handler
 io.on("connection", (socket) => {
   console.log("New client connected:", {
     id: socket.id,
@@ -72,7 +71,7 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   console.log(`Frontend URL configured: ${FRONTEND_URL}`);
   console.log(
-    `Database URI: ${DB_URI.replace(/\/\/.*:.*@/, "//[REDACTED]:")}}`
+    `Database URI: ${DB_URI.replace(/\/\/.*:.*@/, "//[REDACTED]:")}`
   );
 });
 

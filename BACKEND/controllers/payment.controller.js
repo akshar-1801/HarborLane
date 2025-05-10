@@ -106,8 +106,7 @@ exports.verifyPayment = async (req, res) => {
       });
 
       await payment.save();
-
-      // **Wait for Invoice API Response**
+      // Wait for Invoice API Response
       try {
         const invoiceResponse = await axios.post(
           "https://harborlane-1.onrender.com/generate-invoice",
@@ -174,7 +173,7 @@ exports.verifyPayment = async (req, res) => {
 // Controller to fetch all payments
 exports.getAllPayments = async (req, res) => {
   try {
-    const payments = await Payment.find().sort({ created_at: -1 }); // Get all payments sorted by latest
+    const payments = await Payment.find().sort({ created_at: -1 });
     res.status(200).json(payments);
   } catch (error) {
     console.error("Error fetching payments:", error);

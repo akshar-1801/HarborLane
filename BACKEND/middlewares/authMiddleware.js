@@ -15,7 +15,7 @@ const authenticateUser = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token.replace("Bearer ", ""), SECRET_KEY);
-    req.user = decoded; // Attach user data to request
+    req.user = decoded;
     next();
   } catch (err) {
     res.status(400).json({ message: "Invalid token." });

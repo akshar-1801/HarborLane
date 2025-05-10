@@ -63,7 +63,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Something went wrong!" });
 });
 
-// --- Socket.IO helpers ---
 // These variables and functions let us set the Socket.IO instance and emit events.
 let io;
 function setIo(socketIoInstance) {
@@ -79,5 +78,4 @@ const emitEvent = (eventName, data) => {
   }
 };
 
-// Export the app, setIo, and emitEvent as a single object.
 module.exports = { app, setIo, emitEvent };
